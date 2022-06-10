@@ -1,0 +1,5 @@
+.env
+.DS_Store
+dev-02-logs/
+__pycache__/
+logs/
