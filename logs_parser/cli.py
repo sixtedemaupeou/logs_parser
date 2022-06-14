@@ -19,8 +19,7 @@ async def init_db(drop=False, table=None):
         CREATE TABLE IF NOT EXISTS datasets(
             id_table serial PRIMARY KEY,
             date TIMESTAMP DEFAULT NOW(),
-            idsite INTEGER NOT NULL,
-            category VARCHAR(20) NOT NULL,
+            access INTEGER NOT NULL,
             slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
             views INTEGER NOT NULL,
@@ -34,9 +33,7 @@ async def init_db(drop=False, table=None):
         CREATE TABLE IF NOT EXISTS resources(
             id_table serial PRIMARY KEY,
             date TIMESTAMP DEFAULT NOW(),
-            idsite INTEGER NOT NULL,
-            category VARCHAR(20) NOT NULL,
-            title VARCHAR NOT NULL,
+            access INTEGER NOT NULL,
             id UUID NOT NULL,
             views INTEGER NOT NULL,
             dataset_id VARCHAR(24),
@@ -49,8 +46,7 @@ async def init_db(drop=False, table=None):
         CREATE TABLE IF NOT EXISTS organizations(
             id_table serial PRIMARY KEY,
             date TIMESTAMP DEFAULT NOW(),
-            idsite INTEGER NOT NULL,
-            category VARCHAR(20) NOT NULL,
+            access INTEGER NOT NULL,
             slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
             views INTEGER NOT NULL,
@@ -63,12 +59,10 @@ async def init_db(drop=False, table=None):
         CREATE TABLE IF NOT EXISTS datasets(
             id_table serial PRIMARY KEY,
             date TIMESTAMP DEFAULT NOW(),
-            idsite INTEGER NOT NULL,
-            category VARCHAR(20) NOT NULL,
+            access INTEGER NOT NULL,
             slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
             views INTEGER NOT NULL,
-            dataset_id VARCHAR(24),
             UNIQUE(date, id)
         )
     """

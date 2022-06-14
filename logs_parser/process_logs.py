@@ -4,15 +4,9 @@ import os
 import re
 from datetime import datetime
 
-from dotenv import load_dotenv
 import pandas as pd
-from tqdm import tqdm
 
-from minio_utils import list_log_files, download_from_minio
 from url_parsing import parse_url
-
-load_dotenv()
-tqdm.pandas()
 
 
 def generate_logfile_df(logs_filepath: str) -> pd.DataFrame:
@@ -44,11 +38,8 @@ def clean_df(df: pd.DataFrame) -> pd.DataFrame:
     """
     Clean the dataframe
     """
-    # df = df.dropna(subset=["url"])
     df['url'] = df['url'].str.split('?').apply(lambda x: x[0])
     df['url'] = df['url'].str.strip()
-    # df['url'] = df['url'].remove_prefix("/")
-    # re.compile(r"""\/(?P<ipaddress>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - - \[(?P<dateandtime>\d{2}\/[a-z]{3}\/\d{4}:\d{2}:\d{2}:\d{2} (\+|\-)\d{4})\] ((\"(GET|POST) )(?P<url>.+)(http\/1\.1")) (?P<statuscode>\d{3}) (?P<bytessent>\d+) (["](?P<refferer>(\-)|(.+))["]) (["](?P<useragent>.+)["])""", re.IGNORECASE)
     return df
 
 
@@ -118,28 +109,6 @@ def format_and_count(df: pd.DataFrame, category: str) -> pd.DataFrame:
     }[category]
     df = df[df['category'] == category][['ipaddress', 'dateandtime', 'url', 'access', identifier]].reset_index(drop=True)
     df = add_id_and_slug(df, identifier, f'{category}s')
-    df = group_by_date(df, ['url', 'access', 'id'])
+    df = group_by_date(df, ['access', 'id'])
     print(df)
     return df
-
-
-# log_keys = list_log_files("dev-02-logs")
-# for log_key in log_keys:
-#     print(log_key)
-#     download_from_minio(log_key, log_key)
-
-# log_key = log_keys[3]
-INPUT_DIR = "./dev-02-logs"
-
-# download_from_minio(log_key, log_key)
-# random_filepath = os.path.join(INPUT_DIR, 'dev.data.gouv.fr.access.log.2.gz')
-all_log_files = ['demo.data.gouv.fr.access.log.1'] # os.listdir(INPUT_DIR)
-df = pd.concat([generate_logfile_df(os.path.join(INPUT_DIR, filename)) for filename in all_log_files], ignore_index=True)
-df = clean_df(df)
-df = enrich_logs_df(df)
-print(df.columns)
-
-reuse_df = format_and_count(df, 'reuse')
-organization_df = format_and_count(df, 'organization')
-dataset_df = format_and_count(df, 'dataset')
-resource_df = format_and_count(df, 'resource')
