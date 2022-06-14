@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from url_parsing import parse_url
+from logs_parser.url_parsing import parse_url
 
 
 def generate_logfile_df(logs_filepath: str) -> pd.DataFrame:
@@ -87,7 +87,6 @@ def add_id_and_slug(df: pd.DataFrame, id_or_slug_colname: str, catalog_name: str
     df_with_id_slug.drop(columns=[id_or_slug_colname], inplace=True)
     if 'id' in df_with_id_slug.columns:
         df_with_id_slug = df_with_id_slug[~df_with_id_slug['id'].isnull()].reset_index(drop=True)
-    print(df_with_id_slug)
     return df_with_id_slug
 
 
@@ -97,18 +96,23 @@ def group_by_date(df: pd.DataFrame, groupby: List[str]) -> pd.DataFrame:
             print(f'Missing column {col}')
             return pd.DataFrame(columns=['date']+groupby)
     df['date'] = df['dateandtime'].apply(lambda x: datetime.strptime(x, '%d/%b/%Y:%H:%M:%S %z').date())
-    return df[['date']+groupby].groupby(['date'] + groupby).size().sort_values(ascending=True).reset_index(name='count')
+    return df[['date']+groupby].groupby(['date'] + groupby).size().sort_values(ascending=True).reset_index(name='daily_views')
 
 
 def format_and_count(df: pd.DataFrame, category: str) -> pd.DataFrame:
     identifier = {
-        'reuse': 'reuse_id_or_slug',
-        'organization': 'organization_id_or_slug',
-        'dataset': 'dataset_id_or_slug',
-        'resource': 'resource_id'
+        'reuses': 'reuse_id_or_slug',
+        'organizations': 'organization_id_or_slug',
+        'datasets': 'dataset_id_or_slug',
+        'resources': 'resource_id'
     }[category]
     df = df[df['category'] == category][['ipaddress', 'dateandtime', 'url', 'access', identifier]].reset_index(drop=True)
-    df = add_id_and_slug(df, identifier, f'{category}s')
-    df = group_by_date(df, ['access', 'id'])
+    df = add_id_and_slug(df, identifier, category)
+    
+    groupers = ['access', 'id']
+    for optional_col in ['slug', 'organization_id', 'dataset_id']:
+        if optional_col in df.columns:
+            groupers.append(optional_col)
+    df = group_by_date(df, groupers)
     print(df)
     return df

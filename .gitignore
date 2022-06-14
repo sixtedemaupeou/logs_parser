@@ -2,5 +2,6 @@
 .DS_Store
 catalogs/
 dev-02-logs/
+dist/
 __pycache__/
 logs/

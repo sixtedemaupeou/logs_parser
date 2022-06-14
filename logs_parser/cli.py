@@ -18,13 +18,13 @@ async def init_db(drop=False, table=None):
         """
         CREATE TABLE IF NOT EXISTS datasets(
             id_table serial PRIMARY KEY,
-            date TIMESTAMP DEFAULT NOW(),
-            access INTEGER NOT NULL,
+            date DATE NOT NULL,
+            access VARCHAR(10) NOT NULL,
             slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
-            views INTEGER NOT NULL,
+            daily_views INTEGER NOT NULL,
             organization_id VARCHAR(24),
-            UNIQUE(date, id)
+            UNIQUE(date, access, id)
         )
     """
     )
@@ -32,12 +32,12 @@ async def init_db(drop=False, table=None):
         """
         CREATE TABLE IF NOT EXISTS resources(
             id_table serial PRIMARY KEY,
-            date TIMESTAMP DEFAULT NOW(),
-            access INTEGER NOT NULL,
+            date DATE NOT NULL,
+            access VARCHAR(10) NOT NULL,
             id UUID NOT NULL,
-            views INTEGER NOT NULL,
+            daily_views INTEGER NOT NULL,
             dataset_id VARCHAR(24),
-            UNIQUE(date, id)
+            UNIQUE(date, access, id)
         )
     """
     )
@@ -45,25 +45,25 @@ async def init_db(drop=False, table=None):
         """
         CREATE TABLE IF NOT EXISTS organizations(
             id_table serial PRIMARY KEY,
-            date TIMESTAMP DEFAULT NOW(),
-            access INTEGER NOT NULL,
+            date DATE NOT NULL,
+            access VARCHAR(10) NOT NULL,
             slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
-            views INTEGER NOT NULL,
-            UNIQUE(date, id)
+            daily_views INTEGER NOT NULL,
+            UNIQUE(date, access, id)
         )
     """
     )
     await context["conn"].execute(
         """
-        CREATE TABLE IF NOT EXISTS datasets(
+        CREATE TABLE IF NOT EXISTS reuses(
             id_table serial PRIMARY KEY,
-            date TIMESTAMP DEFAULT NOW(),
-            access INTEGER NOT NULL,
+            date DATE NOT NULL,
+            access VARCHAR(10) NOT NULL,
             slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
-            views INTEGER NOT NULL,
-            UNIQUE(date, id)
+            daily_views INTEGER NOT NULL,
+            UNIQUE(date, access, id)
         )
     """
     )
