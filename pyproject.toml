@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "logs_parser"
+version = "0.1.0"
+description = "Tool for parsing logs and recording number of views for each page on data.gouv.fr"
+authors = ["Sixte de Maupeou <sixtedemaupeou@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+asyncpg = "0.25.0"
+boto3 = "1.24.4"
+numpy = "1.22.4"
+pandas = "1.4.2"
+python-dotenv = "0.20.0"
+requests = "^2.28.0"
+tqdm = "4.64.0"
+asyncio = "^3.4.3"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+logs_parser = "logs_parser.cli:run"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
