@@ -18,7 +18,6 @@ def get_minio_url(url: str, bucket: str, key: str) -> str:
 def list_log_files(prefix: str) -> list:
     client = get_s3_client()
     bucket = os.getenv('MINIO_BUCKET')
-    # print([log['Key'] for log in client.list_objects(Bucket=bucket).get('Contents', [])])
     log_keys = [log['Key'] for log in client.list_objects(Bucket=bucket).get('Contents', []) if log['Key'].startswith(prefix)]
     return log_keys
 
@@ -34,7 +33,7 @@ def get_s3_client() -> boto3.client:
 
 
 def download_from_minio(key: str, filepath: str) -> None:
-    logging.info("Downloading from minio")
+    logging.info(f"Downloading from minio: {key} to: {filepath}")
     s3 = get_s3_client()
     try:
         s3.download_file(os.getenv('MINIO_BUCKET'), key, filepath)
@@ -43,6 +42,3 @@ def download_from_minio(key: str, filepath: str) -> None:
         )
     except ClientError as e:
         logging.error(e)
-
-
-# print(list_log_files("dev-02-logs"))

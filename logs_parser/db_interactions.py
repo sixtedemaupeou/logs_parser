@@ -1,6 +1,8 @@
 import pandas as pd
 
 import logs_parser.context as context
+from logs_parser.process_logs import format_and_count
+
 
 async def write_dataset_logs_to_db(df: pd.DataFrame) -> None:
     """Write dataset logs to DB
@@ -87,3 +89,9 @@ async def write_logs_to_table(df: pd.DataFrame, table: str) -> None:
     else:
         raise ValueError(f'Unknown table {table}')
 
+
+async def write_logs_to_db(df: pd.DataFrame):
+    for category in ['reuses', 'organizations', 'datasets', 'resources']:
+        category_df = format_and_count(df, category)
+        if not category_df.empty:
+            await write_logs_to_table(category_df, category)

@@ -1,7 +1,8 @@
-import os
 import asyncpg
-
 from minicli import cli, run, wrap
+import os
+
+from logs_parser.parse_log import record_daily_views
 
 context = {}
 
@@ -60,13 +61,20 @@ async def init_db(drop=False, table=None):
             id_table serial PRIMARY KEY,
             date DATE NOT NULL,
             access VARCHAR(10) NOT NULL,
-            slug VARCHAR NOT NULL,
             id VARCHAR(24) NOT NULL,
             daily_views INTEGER NOT NULL,
             UNIQUE(date, access, id)
         )
     """
     )
+
+
+@cli
+async def parse(logs_folder: str) -> None:
+    """Download, parse logs and store daily views per page in DB"""
+    print("Parsing logs...")
+    await record_daily_views(logs_folder)
+
 
 
 @wrap

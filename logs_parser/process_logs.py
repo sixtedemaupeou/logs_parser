@@ -114,5 +114,4 @@ def format_and_count(df: pd.DataFrame, category: str) -> pd.DataFrame:
         if optional_col in df.columns:
             groupers.append(optional_col)
     df = group_by_date(df, groupers)
-    print(df)
     return df
